@@ -8,11 +8,11 @@ import axios from "axios";
 const { API_KEY, URL } = API_CONFIG;
 
 function Moviepanel() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("popularity.desc");
   const [genres, setGenres] = useState([]);
   const [movies, setMovies] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState('');
+  const [selectedGenre, setSelectedGenre] = useState("");
 
   //for fetching the list of genres in the first render
   useEffect(() => {
@@ -35,12 +35,12 @@ function Moviepanel() {
         {
           headers: {
             Authorization: API_KEY,
-          }
+          },
         }
-      )
+      );
 
       setMovies(response.data.results);
-    }
+    };
 
     getGenre();
     renderNowPlaying();
@@ -78,25 +78,29 @@ function Moviepanel() {
       params: {
         query: searchQuery,
       },
-    }
-  );
-  console.log(response.data) 
+    });
+    console.log(response.data);
     setMovies(response.data.results);
   };
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
   };
-  
+
   const handleGenreChange = (e) => {
     setSelectedGenre(e.target.value);
   };
-  
+
   return (
     <div>
       <div className="header">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <h1 className="headline">Movie Time</h1>
+          <h1 className="headline">
+            <span>
+              <img src="../../public/Movietime.svg" alt="movietime" />
+            </span>
+            Movie Time
+          </h1>
           <div className="searchbar">
             <input
               type="text"
@@ -104,7 +108,10 @@ function Moviepanel() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search here..."
             />
-            <button onClick={handleSearch} onKeyDown={(event) => event.key ==="Enter" && handleSearch()}>
+            <button
+              onClick={handleSearch}
+              onKeyDown={(event) => event.key === "Enter" && handleSearch()}
+            >
               <FaSearch />
             </button>
           </div>
@@ -117,12 +124,8 @@ function Moviepanel() {
             <option value="popularity.asc">Popularity Ascending</option>
             <option value="vote_average.desc">Rating Descending</option>
             <option value="vote_average.asc">Rating Ascending</option>
-            <option value="release_date.desc">
-              Release Date Descending
-            </option>
-            <option value="release_date.asc">
-              Release Date Ascending
-            </option>
+            <option value="release_date.desc">Release Date Descending</option>
+            <option value="release_date.asc">Release Date Ascending</option>
           </select>
           <label htmlFor="genre">Genre:</label>
           <select value={selectedGenre} id="genre" onChange={handleGenreChange}>
