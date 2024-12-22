@@ -97,7 +97,7 @@ function Moviepanel() {
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <h1 className="headline">
             <span>
-              <img src="../../public/Movietime.svg" alt="movietime" />
+              <img src="../../public/Movietime.svg" alt="" />
             </span>
             Movie Time
           </h1>
