@@ -8,13 +8,13 @@ import axios from "axios";
 const { API_KEY, URL } = API_CONFIG;
 
 function Moviepanel() {
-  const [data, setData] = useState([]);
-  const [value, setValue] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState("popularity.desc");
   const [genres, setGenres] = useState([]);
   const [movies, setMovies] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState('');
 
+  //for fetching the list of genres in the first render
   useEffect(() => {
     const getGenre = async () => {
       const response = await axios.get(
@@ -28,9 +28,25 @@ function Moviepanel() {
 
       setGenres(response.data.genres);
     };
+
+    const renderNowPlaying = async () => {
+      const response = await axios.get(
+        "https://api.themoviedb.org/3/movie/now_playing",
+        {
+          headers: {
+            Authorization: API_KEY,
+          }
+        }
+      )
+
+      setMovies(response.data.results);
+    }
+
     getGenre();
+    renderNowPlaying();
   }, []);
-  console.log(selectedGenre)
+
+  //fetch the list of movies based on the sortby, genre or searchquery
   useEffect(() => {
     const fetchMovies = async () => {
       const response = await axios.get(
@@ -43,7 +59,7 @@ function Moviepanel() {
             sort_by: sortBy,
             page: 1,
             with_genres: selectedGenre,
-            query: data
+            query: searchQuery,
           },
         }
       );
@@ -51,29 +67,31 @@ function Moviepanel() {
       setMovies(response.data.results);
     };
     fetchMovies();
-  }, [sortBy, selectedGenre, data]);
+  }, [sortBy, selectedGenre, searchQuery]);
 
+  // hit the API when searching the movie from searchbar
   const handleSearch = async () => {
     const response = await axios.get(URL, {
       headers: {
         Authorization: API_KEY,
       },
       params: {
-        query: value,
+        query: searchQuery,
       },
-    });
-
-    setData(response.data.results);
+    }
+  );
+  console.log(response.data) 
+    setMovies(response.data.results);
   };
 
   const handleSortChange = (e) => {
     setSortBy(e.target.value);
   };
-
+  
   const handleGenreChange = (e) => {
     setSelectedGenre(e.target.value);
   };
-
+  
   return (
     <div>
       <div className="header">
@@ -82,11 +100,11 @@ function Moviepanel() {
           <div className="searchbar">
             <input
               type="text"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search here..."
             />
-            <button onClick={handleSearch}>
+            <button onClick={handleSearch} onKeyDown={(event) => event.key ==="Enter" && handleSearch()}>
               <FaSearch />
             </button>
           </div>
@@ -94,23 +112,23 @@ function Moviepanel() {
 
         <div className="filters">
           <label htmlFor="sort-by">Sort By:</label>
-          <select name="sort-by" id="sort-by" onChange={handleSortChange}>
+          <select value={sortBy} id="sort-by" onChange={handleSortChange}>
             <option value="popularity.desc">Popularity Descending</option>
             <option value="popularity.asc">Popularity Ascending</option>
             <option value="vote_average.desc">Rating Descending</option>
             <option value="vote_average.asc">Rating Ascending</option>
-            <option value="primary_release_date.desc">
+            <option value="release_date.desc">
               Release Date Descending
             </option>
-            <option value="primary_release_date.asc">
+            <option value="release_date.asc">
               Release Date Ascending
             </option>
           </select>
-          <label htmlFor="sort-by">Genre:</label>
-          <select name="sort-by" id="sort-by" onChange={handleGenreChange}>
+          <label htmlFor="genre">Genre:</label>
+          <select value={selectedGenre} id="genre" onChange={handleGenreChange}>
             <option value="">All Genres</option>
             {genres.map((genre) => (
-              <option key={genre.id} value={genre.name}>
+              <option key={genre.id} value={genre.id}>
                 {genre.name}
               </option>
             ))}
@@ -120,7 +138,7 @@ function Moviepanel() {
 
       <div className="now-movie-pane">
         <div className="now-playing">
-          {data.map((movie) => (
+          {movies.map((movie) => (
             <div key={movie.id}>
               <Card
                 poster_path={movie.poster_path}
