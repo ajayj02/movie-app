@@ -1,10 +1,22 @@
 body {
   font-family: sans-serif;
+  margin: 0;
+}
+
+.header {
+   display: flex;
+   flex-direction: column;
+   background-color: rgb(54, 53, 53);
+   position: sticky;
+   max-width: 100%;
+   top: 0px;
 }
 
 .headline {
-  font-size: 3rem;
+  font-size: 2rem;
   text-align: center;
+  color: white;
+  margin-left: 10px;
 }
 
 .searchbar {
@@ -29,6 +41,17 @@ body {
   width: 2rem;
   padding: 5px;
   box-shadow: 1px;
+  cursor: pointer;
+}
+
+.filters {
+  color: white;
+
+}
+
+.now-playing {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
 }
 
 
@@ -63,4 +86,12 @@ body {
   font-size: 0.9rem;
   color: #555;
   margin-top: 0.5rem;
+}
+
+.read-more {
+  background-color: rgb(8, 8, 128);
+  color: white;
+  padding: 2px;
+  border-radius: 4px;
+  cursor: pointer;
 }
